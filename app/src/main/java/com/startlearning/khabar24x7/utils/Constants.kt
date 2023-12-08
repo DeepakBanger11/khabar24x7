@@ -7,6 +7,7 @@ object Constants {
     const val HOME_SCREEN = "home"
     const val LOGIN_SCREEN = "login"
     const val SPLASH_SCREEN ="splash"
+    const val NEWS_LIST_SCREEN ="newsList"
 
     const val SPLASH_SCREEN_DELAY = 5000L
 }

@@ -89,7 +89,7 @@ fun LoginScreen(navigateToHomeScreen: () -> Unit)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { /* Handle login button click */ },
+                onClick = { navigateToHomeScreen() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Login")

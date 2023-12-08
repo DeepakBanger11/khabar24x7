@@ -54,6 +54,9 @@ android {
 dependencies {
     // version variables
     val nav_version = "2.7.5"
+    val paging_version = "3.2.1"
+    val lifecycle_version = "2.6.2"
+
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
@@ -63,6 +66,19 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3-android:1.2.0-alpha03")
+
+    //viewModel and Lifecycle
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-common-java8:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-process:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
+
     // navigation
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
@@ -74,7 +90,10 @@ dependencies {
 
     //Glide
     implementation("com.github.bumptech.glide:glide:4.12.0")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    kapt("com.github.bumptech.glide:compiler:4.12.0")
+    implementation("com.github.bumptech.glide:okhttp3-integration:4.12.0")
+    implementation("com.github.bumptech.glide:recyclerview-integration:4.12.0")
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
 
     //daggar
     implementation("com.google.dagger:dagger: 2.48")
@@ -94,6 +113,15 @@ dependencies {
     //RX java
     implementation ("io.reactivex.rxjava3:rxandroid:3.0.2")
     implementation ("io.reactivex.rxjava3:rxjava:3.1.5")
+
+    // paginations
+    implementation ("androidx.paging:paging-runtime:$paging_version")
+    testImplementation ("androidx.paging:paging-common:$paging_version")
+    implementation ("androidx.paging:paging-rxjava2:$paging_version")
+    implementation ("androidx.paging:paging-rxjava3:$paging_version")
+    implementation ("androidx.paging:paging-guava:$paging_version")
+    implementation ("androidx.paging:paging-compose:3.3.0-alpha02")
+
 
     //truth mockito and turbine
     androidTestImplementation("com.google.truth:truth:1.1.4")
