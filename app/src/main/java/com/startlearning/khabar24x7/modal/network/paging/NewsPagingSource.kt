@@ -8,12 +8,13 @@ import com.startlearning.khabar24x7.modal.network.NewsApiServices
 
 class NewsPagingSource(
     private val apiServices: NewsApiServices,
-    private val category: String
+    private val category: String,
+    private val language:String
 ) : PagingSource<Int, Article>() {
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Article> {
         return try {
             val nextPage = params.key ?: 1
-            val response = apiServices.getAllNews(nextPage,category)
+            val response = apiServices.getAllNews(nextPage,category,language)
             LoadResult.Page(
                 data = response.articles,
                 prevKey = if (nextPage == 1) null else nextPage - 1,

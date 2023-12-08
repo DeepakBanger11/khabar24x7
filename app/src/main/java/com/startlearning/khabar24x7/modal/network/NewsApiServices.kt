@@ -11,6 +11,7 @@ interface NewsApiServices {
     @GET("everything?apiKey=$API_KEY") // Endpoint for fetching plants
     suspend fun getAllNews(
         @Query("page") page: Int,
-        @Query("q") category: String
+        @Query("q") category: String,
+        @Query("language") language: String
     ): NewsJsonResponse
 }

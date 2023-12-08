@@ -16,13 +16,13 @@ open
 class NewsRepository @Inject constructor(
     private val newsApiServices: NewsApiServices
 ) {
-    suspend fun getAllNews(page:Int,category: String): NewsJsonResponse {
-        return newsApiServices.getAllNews(page,category)
+    suspend fun getAllNews(page:Int,category: String,language:String): NewsJsonResponse {
+        return newsApiServices.getAllNews(page,category,language)
     }
-    fun getNewsPaging(category: String): Flow<PagingData<Article>> {
+    fun getNewsPaging(category: String,language:String): Flow<PagingData<Article>> {
         return Pager(
             config = PagingConfig(pageSize = 30, enablePlaceholders = false),
-            pagingSourceFactory = { NewsPagingSource(newsApiServices,category) }
+            pagingSourceFactory = { NewsPagingSource(newsApiServices,category,language) }
         ).flow
     }
 

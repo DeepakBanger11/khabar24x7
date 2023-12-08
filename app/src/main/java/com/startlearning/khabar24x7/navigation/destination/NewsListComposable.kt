@@ -11,7 +11,8 @@ import com.startlearning.khabar24x7.ui.screens.home.NewsListScreen
 import com.startlearning.khabar24x7.utils.Constants
 
 fun NavGraphBuilder.newsListComposable(
-    navigateToNewsListScreen: () -> Unit,
+    navigateToMyNewsListScreen: () -> Unit,
+    navigateToHomeScreen: () -> Unit,
     newsViewModel: NewsViewModel,
     userPreferencesDataStore: UserPreferencesDataStore
 ) {
@@ -27,7 +28,8 @@ fun NavGraphBuilder.newsListComposable(
     )
     {
         NewsListScreen(
-            navigateToNewsListScreen = navigateToNewsListScreen,
+            navigateToMyNewsListScreen = navigateToMyNewsListScreen,
+            navigateToHomeScreen = navigateToHomeScreen,
             newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore
         )

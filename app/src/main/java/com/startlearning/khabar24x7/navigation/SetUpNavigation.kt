@@ -36,10 +36,12 @@ fun SetUpNavigation(
         )
         homeComposable(
             navigateToNewsListScreen = screen.newsList,
+            newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore
         )
         newsListComposable(
-            navigateToNewsListScreen = screen.myNewsList,
+            navigateToMyNewsListScreen = screen.myNewsList,
+            navigateToHomeScreen = screen.home,
             newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore
         )

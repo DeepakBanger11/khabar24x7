@@ -5,12 +5,14 @@ import androidx.compose.animation.slideOutVertically
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
+import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 
 import com.startlearning.khabar24x7.ui.screens.home.HomeScreen
 import com.startlearning.khabar24x7.utils.Constants
 
 fun NavGraphBuilder.homeComposable(
     navigateToNewsListScreen: () -> Unit,
+    newsViewModel: NewsViewModel,
     userPreferencesDataStore: UserPreferencesDataStore
 ) {
 
@@ -26,6 +28,7 @@ fun NavGraphBuilder.homeComposable(
     {
         HomeScreen(
             navigateToNewsListScreen = navigateToNewsListScreen,
+            newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore
         )
     }

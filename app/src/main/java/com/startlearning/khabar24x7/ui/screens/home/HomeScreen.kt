@@ -45,11 +45,13 @@ import androidx.compose.ui.unit.sp
 import com.startlearning.khabar24x7.R
 import com.startlearning.khabar24x7.modal.data.NewsCategories
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
+import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 
 
 @Composable
 fun HomeScreen(
     navigateToNewsListScreen: () -> Unit,
+    newsViewModel: NewsViewModel,
     userPreferencesDataStore: UserPreferencesDataStore
 ) {
     val newsCategories = listOf(
@@ -63,8 +65,9 @@ fun HomeScreen(
         NewsCategories("Technology", painterResource(id = R.drawable.technology))
     )
     val chunkedCategories = newsCategories.chunked(2)
+
     Column {
-        TopBar()
+        TopBar(newsViewModel = newsViewModel)
 
 
         LazyColumn(
@@ -79,7 +82,8 @@ fun HomeScreen(
                     chunk.forEach { category ->
                         CategoryCard(
                             category = category,
-                            navigateToNewsListScreen = navigateToNewsListScreen
+                            navigateToNewsListScreen = navigateToNewsListScreen,
+                            newsViewModel = newsViewModel
                         )
                     }
                 }
@@ -94,15 +98,20 @@ fun HomeScreen(
 @Composable
 fun CategoryCard(
     category: NewsCategories,
-    navigateToNewsListScreen: () -> Unit) {
-
+    navigateToNewsListScreen: () -> Unit,
+    newsViewModel: NewsViewModel
+) {
+    // add it to display data in required categories
     Card(
         modifier = Modifier
             .padding(8.dp)
             .width(160.dp)
             .height(160.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        onClick = {navigateToNewsListScreen()}
+        onClick = {
+            navigateToNewsListScreen()
+            newsViewModel.toggleCategory(category.title)
+        }
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -127,14 +136,16 @@ fun CategoryCard(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+fun TopBar(newsViewModel: NewsViewModel,) {
     TopAppBar(
         title = {
-            Text(text = "Khabar24x7",
-                color = Color.White)
-                },
+            Text(
+                text = "Khabar24x7",
+                color = Color.White
+            )
+        },
         actions = {
-            CountryDropDown()
+            CountryDropDown(newsViewModel = newsViewModel)
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary
@@ -143,13 +154,15 @@ fun TopBar() {
 }
 
 @Composable
-fun CountryDropDown() {
+fun CountryDropDown(
+    newsViewModel: NewsViewModel
+) {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val density = LocalDensity.current.density
-
+    var selectedLanguage by remember { mutableStateOf("") }
     val countries =
-        listOf("Select Language", "en", "fr", "es", "he","ru",) // Add more countries as needed
+        listOf("Select Language", "en", "fr", "es", "he", "ru") // Add more countries as needed
     var selectedCountry by remember { mutableStateOf(countries[0]) }
 
     Row {
@@ -163,18 +176,19 @@ fun CountryDropDown() {
             countries.forEach { country ->
                 DropdownMenuItem(
                     text = {
-                        Text(text = country,
+                        Text(
+                            text = country,
                             fontSize = 14.sp
                             //color = Color.White
-                           )
-                           },
+                        )
+                    },
                     onClick = {
                         selectedCountry = country
                         expanded = false
                         // Perform actions based on the selected country if needed
                         // For example, you can navigate or perform some functionality here
                         if (country != "Select Country") {
-                            // Do something with the selected country
+                            newsViewModel.setSelectedLanguage(country)
                             // e.g., navigate to a specific screen
                         }
                     }
@@ -207,8 +221,3 @@ fun CountryDropDown() {
     }
 }
 
-@Preview
-@Composable
-fun PreviewHomePage() {
-    TopBar()
-}
