@@ -10,6 +10,7 @@ import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 import com.startlearning.khabar24x7.navigation.destination.homeComposable
 import com.startlearning.khabar24x7.navigation.destination.loginComposable
 import com.startlearning.khabar24x7.navigation.destination.newsListComposable
+import com.startlearning.khabar24x7.navigation.destination.profileComposable
 import com.startlearning.khabar24x7.navigation.destination.splashComposable
 import com.startlearning.khabar24x7.utils.Constants.NEWS_LIST_SCREEN
 import com.startlearning.khabar24x7.utils.Constants.SPLASH_SCREEN
@@ -32,15 +33,24 @@ fun SetUpNavigation(
             navigateToLoginScreen = screen.login
         )
         loginComposable(
-            navigateToHomeScreen = screen.home
+            navigateToHomeScreen = screen.home,
+            newsViewModel = newsViewModel
         )
         homeComposable(
             navigateToNewsListScreen = screen.newsList,
+            navigateToProfileScreen=screen.profile,
             newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore
         )
         newsListComposable(
             navigateToMyNewsListScreen = screen.myNewsList,
+            navigateToHomeScreen = screen.home,
+            navigateToProfileScreen=screen.profile,
+            newsViewModel = newsViewModel,
+            userPreferencesDataStore = userPreferencesDataStore
+        )
+        profileComposable(
+            navigateToMyNewsListScreen = screen.newsList,
             navigateToHomeScreen = screen.home,
             newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore

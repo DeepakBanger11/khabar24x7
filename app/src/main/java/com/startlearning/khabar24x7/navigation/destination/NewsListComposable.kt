@@ -6,13 +6,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
-import com.startlearning.khabar24x7.ui.screens.home.HomeScreen
-import com.startlearning.khabar24x7.ui.screens.home.NewsListScreen
+import com.startlearning.khabar24x7.ui.screens.news.NewsListScreen
 import com.startlearning.khabar24x7.utils.Constants
 
 fun NavGraphBuilder.newsListComposable(
     navigateToMyNewsListScreen: () -> Unit,
     navigateToHomeScreen: () -> Unit,
+    navigateToProfileScreen: () -> Unit,
     newsViewModel: NewsViewModel,
     userPreferencesDataStore: UserPreferencesDataStore
 ) {
@@ -30,6 +30,7 @@ fun NavGraphBuilder.newsListComposable(
         NewsListScreen(
             navigateToMyNewsListScreen = navigateToMyNewsListScreen,
             navigateToHomeScreen = navigateToHomeScreen,
+            navigateToProfileScreen = navigateToProfileScreen,
             newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore
         )

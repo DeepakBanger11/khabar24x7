@@ -76,6 +76,16 @@ class NewsViewModel @Inject constructor(
             userPreferencesDataStore.toggleCategory(category)
         }
     }
+    fun setLogin(email: String,password:String) {
+        viewModelScope.launch {
+            userPreferencesDataStore.setLogin(email,password)
+        }
+    }
+    fun setNavigation(navigation: String){
+        viewModelScope.launch {
+            userPreferencesDataStore.setNavigation(navigation)
+        }
+    }
 
 
 }

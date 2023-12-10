@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">khabar24x7</string>
+    <string name="hide_password">Hide Password</string>
+    <string name="show_password">Show Password</string>
 </resources>

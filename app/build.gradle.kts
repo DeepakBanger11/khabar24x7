@@ -122,6 +122,9 @@ dependencies {
     implementation ("androidx.paging:paging-guava:$paging_version")
     implementation ("androidx.paging:paging-compose:3.3.0-alpha02")
 
+    //material icon
+    implementation("androidx.compose.material:material-icons-extended:1.6.0-beta02")
+
 
     //truth mockito and turbine
     androidTestImplementation("com.google.truth:truth:1.1.4")

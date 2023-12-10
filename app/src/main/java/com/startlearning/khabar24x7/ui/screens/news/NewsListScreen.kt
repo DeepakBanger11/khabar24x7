@@ -1,10 +1,12 @@
-package com.startlearning.khabar24x7.ui.screens.home
+package com.startlearning.khabar24x7.ui.screens.news
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +30,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -47,14 +52,15 @@ import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 fun NewsListScreen(
     navigateToMyNewsListScreen: () -> Unit,
     navigateToHomeScreen: () -> Unit,
+    navigateToProfileScreen: () -> Unit,
     newsViewModel: NewsViewModel,
     userPreferencesDataStore: UserPreferencesDataStore
 ) {
     val selectedLanguage by userPreferencesDataStore.selectedLanguageFlow.collectAsState(initial = "")
-    val selectedCategories by userPreferencesDataStore.selectedCategoriesFlow.collectAsState(initial ="en")
+    val selectedCategories by userPreferencesDataStore.selectedCategoriesFlow.collectAsState(initial = "en")
 
     val lazyPagingItems = newsViewModel.getNewsPaging(
-        selectedCategories.toString()?:"health",
+        selectedCategories.toString() ?: "health",
         "en"
     ).collectAsLazyPagingItems()
     Column {
@@ -74,7 +80,7 @@ fun NewsListScreen(
                     Icon(
                         imageVector = Icons.Default.ArrowBack,
                         contentDescription = "Back",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
             },
@@ -85,18 +91,24 @@ fun NewsListScreen(
                         .size(36.dp)
                 ) {
                     IconButton(
-                        onClick = { /* Navigate to profile screen */ }
+                        onClick = {
+                            newsViewModel.setNavigation("newsList")
+                            navigateToProfileScreen()
+                        }
                     ) {
                         Icon(
                             imageVector = Icons.Default.AccountCircle,
                             contentDescription = "Profile",
-                            tint = Color.White
+                            tint = Color.White,
+                            modifier = Modifier
+                                .size(50.dp)
                         )
                     }
                 }
             },
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary)
+                containerColor = MaterialTheme.colorScheme.primary
+            )
         )
         LazyColumn {
             items(lazyPagingItems.itemCount) { index ->
@@ -124,27 +136,54 @@ fun NewsItem(article: Article) {
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp)
                 .fillMaxWidth()
         ) {
-            GlideImage(
-                model = article.urlToImage,
-                contentDescription = "",
-                Modifier.fillMaxWidth(),
-                contentScale = ContentScale.FillWidth
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9) // Aspect ratio for the image
+                    .clip(RoundedCornerShape(8.dp))
+            ) {
+                GlideImage(
+                    model = article.urlToImage,
+                    contentDescription = "",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                // FAB positioned at the top of the image
+                FloatingActionButton(
+                    onClick = { /* Handle FAB click */ },
+                    elevation = FloatingActionButtonDefaults.elevation(3.dp),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.TopEnd) // Positioning at the top end of the image
+                ) {
+                    // Add your FAB icon or content here
+                    Text(text = "+")
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
-            BasicText(
-                text = article.title,
-                style = MaterialTheme.typography.headlineSmall,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = article.author,
-            )
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = article.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = article.author,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = Color.Gray
+                )
+            }
         }
     }
 }

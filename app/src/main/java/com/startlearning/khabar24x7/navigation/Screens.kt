@@ -4,6 +4,7 @@ import androidx.navigation.NavController
 import com.startlearning.khabar24x7.utils.Constants.HOME_SCREEN
 import com.startlearning.khabar24x7.utils.Constants.LOGIN_SCREEN
 import com.startlearning.khabar24x7.utils.Constants.NEWS_LIST_SCREEN
+import com.startlearning.khabar24x7.utils.Constants.PROFILE_SCREEN
 import com.startlearning.khabar24x7.utils.Constants.SPLASH_SCREEN
 
 class Screens(navController: NavController) {
@@ -32,6 +33,13 @@ class Screens(navController: NavController) {
             route = "myNewsList"
         ) {
             popUpTo(NEWS_LIST_SCREEN) { inclusive = true }
+        }
+    }
+    val profile :() ->Unit ={
+        navController.navigate(
+            route = "profile"
+        ) {
+            popUpTo(PROFILE_SCREEN) { inclusive = true }
         }
     }
 

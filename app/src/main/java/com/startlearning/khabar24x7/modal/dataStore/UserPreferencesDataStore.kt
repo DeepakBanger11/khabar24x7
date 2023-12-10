@@ -23,7 +23,15 @@ class UserPreferencesDataStore @Inject constructor(
     val selectedCategoriesFlow: Flow<String?> = dataStore.data.map { preferences ->
         preferences[KEY_SELECTED_CATEGORIES]
     }
-
+    val email: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[KEY_EMAIL]
+    }
+    val password: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[KEY_PASSWORD]
+    }
+    val navigation: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[KEY_NAVIGATION]
+    }
     suspend fun setSelectedLanguage(language: String) {
         dataStore.edit { preferences ->
             preferences[KEY_SELECTED_LANGUAGE] = language
@@ -36,8 +44,25 @@ class UserPreferencesDataStore @Inject constructor(
         }
     }
 
+    suspend fun setLogin(email: String,password:String) {
+        dataStore.edit { preferences ->
+            preferences[KEY_EMAIL] = email
+        }
+        dataStore.edit { preferences ->
+            preferences[KEY_PASSWORD] = password
+        }
+    }
+    suspend fun setNavigation(navigation: String) {
+        dataStore.edit { preferences ->
+            preferences[KEY_NAVIGATION] = navigation
+        }
+    }
+
     companion object {
         private val KEY_SELECTED_LANGUAGE = stringPreferencesKey("selected_language")
         private val KEY_SELECTED_CATEGORIES = stringPreferencesKey("selected_categories")
+        private val KEY_EMAIL = stringPreferencesKey("email")
+        private val KEY_PASSWORD = stringPreferencesKey("password")
+        private val KEY_NAVIGATION = stringPreferencesKey("navigation")
     }
 }
