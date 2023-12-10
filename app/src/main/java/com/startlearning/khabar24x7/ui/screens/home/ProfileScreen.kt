@@ -2,7 +2,6 @@ package com.startlearning.khabar24x7.ui.screens.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.Card
@@ -33,6 +31,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,37 +40,15 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Observer
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.startlearning.khabar24x7.modal.data.newsJson.Article
-import com.startlearning.khabar24x7.modal.data.newsJson.Source
+import com.startlearning.khabar24x7.R
+import com.startlearning.khabar24x7.modal.data.TableArticle
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
-import com.startlearning.khabar24x7.R
 
-val savedArticles = listOf(
-    Article(
-        author = "John Doe",
-        title = "Sample Article 1",
-        urlToImage = "https://www.journaldugeek.com/app/uploads/2023/12/god9.jpg",
-        content = "",
-        description = "",
-        publishedAt = "",
-        source = Source("", ""),
-        url = ""
-    ),
-    Article(
-        author = "Jane Smith",
-        title = "Sample Article 2",
-        urlToImage = "https://www.presse-citron.net/app/uploads/2023/11/walking-dead-destinies-rick.jpg",
-        content = "",
-        description = "",
-        publishedAt = "",
-        source = Source("", ""),
-        url = ""
-    )
-    // Add more articles as needed
-)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,6 +61,9 @@ fun ProfileScreen(
     val email by userPreferencesDataStore.email.collectAsState(initial = "test")
     val password by userPreferencesDataStore.password.collectAsState(initial = "test")
     val navigation by userPreferencesDataStore.navigation.collectAsState(initial = "home")
+    val articlesState = newsViewModel.getAllArticles.observeAsState(initial = emptyList())
+    val articles = articlesState.value
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -152,7 +132,7 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn {
-            items(savedArticles) { article ->
+            items(articles) {article ->
                 SavedArticleItem(article)
                 Spacer(modifier = Modifier.height(4.dp))
             }
@@ -162,7 +142,7 @@ fun ProfileScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun SavedArticleItem(article: Article) {
+fun SavedArticleItem(article: TableArticle) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.startlearning.khabar24x7.modal.data.TableArticle
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
 import com.startlearning.khabar24x7.modal.data.newsJson.NewsJsonResponse
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
@@ -24,8 +25,17 @@ class NewsViewModel @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore
 ) : ViewModel() {
 
+     val getAllArticles: LiveData<List<TableArticle>> = repository.getAllArticles
+
+
     private val _newsJsonResponse = MutableLiveData<NewsJsonResponse>()
     val newsJsonResponse: LiveData<NewsJsonResponse> = _newsJsonResponse
+
+    fun addArticles(article: TableArticle) {
+        viewModelScope.launch {
+            repository.addArticles(article)
+        }
+    }
 
 
     suspend fun <T> apiRequestWithRetry(

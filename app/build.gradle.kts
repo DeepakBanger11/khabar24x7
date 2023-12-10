@@ -78,6 +78,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-process:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
+    implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+
 
     // navigation
     implementation("androidx.navigation:navigation-compose:$nav_version")
