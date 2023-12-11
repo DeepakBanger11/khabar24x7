@@ -9,22 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,21 +31,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.startlearning.khabar24x7.modal.data.TableArticle
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
+import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
+import com.startlearning.khabar24x7.ui.screens.other.TopBar
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsListScreen(
-    navigateToMyNewsListScreen: () -> Unit,
-    navigateToHomeScreen: () -> Unit,
-    navigateToProfileScreen: () -> Unit,
+    navController: NavHostController,
     newsViewModel: NewsViewModel,
     userPreferencesDataStore: UserPreferencesDataStore
 ) {
@@ -65,52 +58,7 @@ fun NewsListScreen(
         "en"
     ).collectAsLazyPagingItems()
     Column {
-        TopAppBar(
-            title = {
-                Text(
-                    text = "Khabar24x7",
-                    color = Color.White
-                )
-            },
-            navigationIcon = {
-                IconButton(
-                    onClick = {
-                        navigateToHomeScreen()
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ArrowBack,
-                        contentDescription = "Back",
-                        tint = Color.White,
-                    )
-                }
-            },
-            actions = {
-                Box(
-                    modifier = Modifier
-                        .padding(end = 16.dp)
-                        .size(36.dp)
-                ) {
-                    IconButton(
-                        onClick = {
-                            newsViewModel.setNavigation("newsList")
-                            navigateToProfileScreen()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = "Profile",
-                            tint = Color.White,
-                            modifier = Modifier
-                                .size(50.dp)
-                        )
-                    }
-                }
-            },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            )
-        )
+        TopBar(navController = navController, VisibiltySetter(false,true))
         LazyColumn {
             items(lazyPagingItems.itemCount) { index ->
                 val article = lazyPagingItems[index]

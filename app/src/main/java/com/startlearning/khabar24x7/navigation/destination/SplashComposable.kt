@@ -8,7 +8,7 @@ import com.startlearning.khabar24x7.ui.screens.SplashScreen
 import com.startlearning.khabar24x7.utils.Constants
 
 fun NavGraphBuilder.splashComposable(
-    navigateToLoginScreen: () -> Unit
+    navigateToSelectedScreen: () -> Unit
 ){
     composable(
         route = Constants.SPLASH_SCREEN,
@@ -20,6 +20,6 @@ fun NavGraphBuilder.splashComposable(
         }
     )
     {
-     SplashScreen(navigateToLoginScreen = navigateToLoginScreen)
+     SplashScreen(navigateToSelectedScreen = navigateToSelectedScreen)
     }
 }

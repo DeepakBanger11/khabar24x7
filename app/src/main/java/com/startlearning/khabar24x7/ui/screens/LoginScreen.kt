@@ -46,7 +46,7 @@ import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 
 @Composable
 fun LoginScreen(
-    navigateToHomeScreen: () -> Unit,
+    navigateToSelectedScreen: () -> Unit,
     newsViewModel: NewsViewModel
     )
 {
@@ -137,7 +137,8 @@ fun LoginScreen(
                 {
                     showToast(context, "Login successful!")
                     newsViewModel.setLogin(email,password)
-                    navigateToHomeScreen()
+                    newsViewModel.setNavigation("home")
+                    navigateToSelectedScreen()
                 }
                           else{
                     showToast(context, "Email or Password isn't correct")
@@ -153,8 +154,3 @@ fun showToast(context: Context, message: String) {
     Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
 }
 
-//@Preview
-//@Composable
-//fun PreviewLoginScreen(){
-//    LoginScreen()
-//}

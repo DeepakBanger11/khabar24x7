@@ -7,18 +7,18 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
-
-import com.startlearning.khabar24x7.ui.screens.home.HomeScreen
+import com.startlearning.khabar24x7.ui.screens.home.ProfileScreen
+import com.startlearning.khabar24x7.ui.screens.news.NewsDetailScreen
 import com.startlearning.khabar24x7.utils.Constants
 
-fun NavGraphBuilder.homeComposable(
+fun NavGraphBuilder.newsDetailComposable(
     navController: NavHostController,
     newsViewModel: NewsViewModel,
     userPreferencesDataStore: UserPreferencesDataStore
 ) {
 
     composable(
-        route = Constants.HOME_SCREEN,
+        route = Constants.NEWS_DETAIL_SCREEN,
         exitTransition = {
             slideOutVertically(
                 animationSpec = tween(200),
@@ -27,10 +27,11 @@ fun NavGraphBuilder.homeComposable(
         }
     )
     {
-        HomeScreen(
+        NewsDetailScreen(
             navController = navController,
             newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore
+
         )
     }
 }

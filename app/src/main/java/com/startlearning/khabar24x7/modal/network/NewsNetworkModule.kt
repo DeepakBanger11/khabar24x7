@@ -18,7 +18,7 @@ object NewsNetworkModule {
     @Singleton
     fun networkRetrofit(): Retrofit {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://newsapi.org/v2/") // Replace with your base URL
+            .baseUrl("https://newsapi.org/v2/")
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
         return retrofit

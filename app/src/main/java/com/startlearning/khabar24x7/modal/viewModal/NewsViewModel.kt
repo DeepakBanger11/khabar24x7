@@ -1,5 +1,6 @@
 package com.startlearning.khabar24x7.modal.viewModal
 
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,11 +26,11 @@ class NewsViewModel @Inject constructor(
     private val userPreferencesDataStore: UserPreferencesDataStore
 ) : ViewModel() {
 
-     val getAllArticles: LiveData<List<TableArticle>> = repository.getAllArticles
-
-
+    val getAllArticles: LiveData<List<TableArticle>> = repository.getAllArticles
     private val _newsJsonResponse = MutableLiveData<NewsJsonResponse>()
     val newsJsonResponse: LiveData<NewsJsonResponse> = _newsJsonResponse
+    private val _selectedArticle = MutableLiveData<TableArticle?>()
+    val selectedArticle: LiveData<TableArticle?> = _selectedArticle
 
     fun addArticles(article: TableArticle) {
         viewModelScope.launch {
@@ -37,6 +38,17 @@ class NewsViewModel @Inject constructor(
         }
     }
 
+    fun getSelectedArticle(articleId: Int) {
+        // Access the repository function that fetches the LiveData<TableArticle>
+        val articleLiveData: LiveData<TableArticle> = repository.getSelectedArticle(articleId)
+
+        // Observe changes in the LiveData and update _selectedArticle
+        articleLiveData.observeForever { article ->
+            _selectedArticle.postValue(article)
+            // If you no longer want to observe changes, remove this observer
+            // articleLiveData.removeObserver {}
+        }
+    }
 
     suspend fun <T> apiRequestWithRetry(
         retryCount: Int = 3,
@@ -60,10 +72,11 @@ class NewsViewModel @Inject constructor(
         throw IOException("Failed after $retryCount attempts")
     }
 
-    fun getAllNews(page: Int, category: String,language:String) {
+    fun getAllNews(page: Int, category: String, language: String) {
         try {
             viewModelScope.launch {
-                val response = apiRequestWithRetry { repository.getAllNews(page, category,language) }
+                val response =
+                    apiRequestWithRetry { repository.getAllNews(page, category, language) }
                 _newsJsonResponse.postValue(response)
             }
         } catch (e: IOException) {
@@ -71,8 +84,8 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    fun getNewsPaging(category: String,language:String): Flow<PagingData<Article>> {
-        return repository.getNewsPaging(category,language)
+    fun getNewsPaging(category: String, language: String): Flow<PagingData<Article>> {
+        return repository.getNewsPaging(category, language)
     }
 
     // Example function in the ViewModel to set the selected language/categories
@@ -81,19 +94,28 @@ class NewsViewModel @Inject constructor(
             userPreferencesDataStore.setSelectedLanguage(language)
         }
     }
+
     fun toggleCategory(category: String) {
         viewModelScope.launch {
             userPreferencesDataStore.toggleCategory(category)
         }
     }
-    fun setLogin(email: String,password:String) {
+
+    fun setLogin(email: String, password: String) {
         viewModelScope.launch {
-            userPreferencesDataStore.setLogin(email,password)
+            userPreferencesDataStore.setLogin(email, password)
         }
     }
-    fun setNavigation(navigation: String){
+
+    fun setNavigation(navigation: String) {
         viewModelScope.launch {
             userPreferencesDataStore.setNavigation(navigation)
+        }
+    }
+
+    fun setArticleId(articleId: Int) {
+        viewModelScope.launch {
+            userPreferencesDataStore.setArticleId(articleId)
         }
     }
 

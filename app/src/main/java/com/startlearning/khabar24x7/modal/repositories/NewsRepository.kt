@@ -26,6 +26,9 @@ class NewsRepository @Inject constructor(
         newsDao.addArticles(article)
     }
 
+     fun getSelectedArticle(articleId: Int): LiveData<TableArticle> {
+        return newsDao.getSelectedArticle(articleId)
+    }
     suspend fun getAllNews(page:Int,category: String,language:String): NewsJsonResponse {
         return newsApiServices.getAllNews(page,category,language)
     }

@@ -16,6 +16,7 @@ interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addArticles(article: TableArticle)
 
-
+    @Query("SELECT * FROM news_table WHERE id =:articleId")
+    fun getSelectedArticle(articleId: Int): LiveData<TableArticle>
 
 }
