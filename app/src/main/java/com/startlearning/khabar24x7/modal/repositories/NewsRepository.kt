@@ -21,9 +21,13 @@ class NewsRepository @Inject constructor(
     private val newsDao: NewsDao
 ) {
     val getAllArticles: LiveData<List<TableArticle>> = newsDao.getAllArticles()
+    val getAllArticlesAsc: LiveData<List<TableArticle>> = newsDao.getAllArticlesAsc()
 
     suspend fun addArticles(article: TableArticle) {
         newsDao.addArticles(article)
+    }
+    suspend fun deleteArticleByTitle(title: String) {
+        newsDao.deleteArticleByTitle(title)
     }
 
      fun getSelectedArticle(articleId: Int): LiveData<TableArticle> {

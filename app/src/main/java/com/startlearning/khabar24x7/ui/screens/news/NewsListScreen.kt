@@ -1,6 +1,7 @@
 package com.startlearning.khabar24x7.ui.screens.news
 
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +38,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.startlearning.khabar24x7.modal.data.TableArticle
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
-import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
+import com.startlearning.khabar24x7.modal.data.VisibiltySetter
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 import com.startlearning.khabar24x7.ui.screens.other.TopBar
@@ -58,12 +59,13 @@ fun NewsListScreen(
         "en"
     ).collectAsLazyPagingItems()
     Column {
-        TopBar(navController = navController, VisibiltySetter(false,true))
+        TopBar(navController = navController, VisibiltySetter(false, true))
         LazyColumn {
             items(lazyPagingItems.itemCount) { index ->
                 val article = lazyPagingItems[index]
                 if (article != null) {
                     NewsItem(
+                        navController = navController,
                         article = article,
                         newsViewModel = newsViewModel
                     )
@@ -78,23 +80,27 @@ fun NewsListScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun NewsItem(
+    navController: NavHostController,
     article: Article,
     newsViewModel: NewsViewModel
 ) {
-    var isFabVisible by remember { mutableStateOf(true) }
+    var isFabVisible by remember { mutableStateOf(false) }
     val articlesState = newsViewModel.getAllArticles.observeAsState(initial = emptyList())
-    articlesState.value.forEach { item ->
-        if (item.title == article.title) {
-            isFabVisible = false
-        } else {
-            isFabVisible = true
-        }
-
+    if (articlesState.value.any { it.title == article.title }) {
+        isFabVisible = true
     }
     Surface(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
+            .clickable {
+                newsViewModel.setNavigation("fromAPI")
+                AddArticleToDataStore(
+                    article = article,
+                    newsViewModel = newsViewModel
+                )
+                navController.navigate("newsDetails")
+            }
             .clip(RoundedCornerShape(8.dp)),
         tonalElevation = 5.dp,
         shadowElevation = 5.dp,
@@ -115,29 +121,36 @@ fun NewsItem(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
-               // setting visibility of fab
-                if(isFabVisible){
-                    FloatingActionButton(
-                        onClick = {
+                // setting visibility of fab
+
+                FloatingActionButton(
+                    onClick = {
+                        isFabVisible = !isFabVisible
+                        if (isFabVisible) {
                             AddArticleToDatabase(
                                 article = article,
                                 newsViewModel = newsViewModel
                             )
-                        },
-                        elevation = FloatingActionButtonDefaults.elevation(3.dp),
-                        containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-                        modifier = Modifier
-                            .padding(16.dp)
-                            .align(Alignment.TopEnd) // Positioning at the top end of the image
-                    ) {
+                        } else {
+                            newsViewModel.deleteArticleByTitle(article.title)
+                        }
+
+                    },
+                    elevation = FloatingActionButtonDefaults.elevation(3.dp),
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.TopEnd) // Positioning at the top end of the image
+                ) {
+
+                    if (!isFabVisible) {
                         Text(text = "+")
+                    } else {
+                        Text(text = "-")
                     }
                 }
-                else{
-
-                }
-
             }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -182,5 +195,22 @@ fun AddArticleToDatabase(
     )
 }
 
+fun AddArticleToDataStore(
+    article: Article,
+    newsViewModel: NewsViewModel
+) {
+    newsViewModel.setArticle(
+        TableArticle(
+            0,
+            article.author,
+            article.content,
+            article.description,
+            article.publishedAt,
+            article.title,
+            article.url,
+            article.urlToImage
+        )
+    )
+}
 
 

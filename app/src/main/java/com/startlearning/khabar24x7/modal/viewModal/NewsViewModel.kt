@@ -27,6 +27,7 @@ class NewsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val getAllArticles: LiveData<List<TableArticle>> = repository.getAllArticles
+    val getAllArticlesAsc: LiveData<List<TableArticle>> = repository.getAllArticlesAsc
     private val _newsJsonResponse = MutableLiveData<NewsJsonResponse>()
     val newsJsonResponse: LiveData<NewsJsonResponse> = _newsJsonResponse
     private val _selectedArticle = MutableLiveData<TableArticle?>()
@@ -35,6 +36,11 @@ class NewsViewModel @Inject constructor(
     fun addArticles(article: TableArticle) {
         viewModelScope.launch {
             repository.addArticles(article)
+        }
+    }
+    fun deleteArticleByTitle(title: String) {
+        viewModelScope.launch {
+            repository.deleteArticleByTitle(title)
         }
     }
 
@@ -117,6 +123,14 @@ class NewsViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferencesDataStore.setArticleId(articleId)
         }
+    }
+   fun setArticle(article: TableArticle) {
+       viewModelScope.launch {
+           userPreferencesDataStore.setArticle(article)
+       }
+    }
+    suspend fun getArticle(): TableArticle? {
+        return userPreferencesDataStore.getArticle()
     }
 
 

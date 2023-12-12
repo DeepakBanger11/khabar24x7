@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.startlearning.khabar24x7.R
 import com.startlearning.khabar24x7.modal.data.NewsCategories
-import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
+import com.startlearning.khabar24x7.modal.data.VisibiltySetter
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 import com.startlearning.khabar24x7.ui.screens.other.TopBar

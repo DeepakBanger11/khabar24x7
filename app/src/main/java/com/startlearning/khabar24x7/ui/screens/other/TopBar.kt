@@ -20,12 +20,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
+import com.startlearning.khabar24x7.modal.data.VisibiltySetter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, showBackArrow: VisibiltySetter) {
+fun TopBar(navController: NavController, visibiltySetter: VisibiltySetter) {
     val scope = rememberCoroutineScope()
 
     TopAppBar(
@@ -36,7 +36,7 @@ fun TopBar(navController: NavController, showBackArrow: VisibiltySetter) {
             )
         },
         navigationIcon = {
-            if (showBackArrow.back) {
+            if (visibiltySetter.back) {
                 IconButton(onClick = { navController.navigateUp() }) {
                     Icon(
                         Icons.Default.ArrowBack,
@@ -52,15 +52,17 @@ fun TopBar(navController: NavController, showBackArrow: VisibiltySetter) {
                     .padding(end = 16.dp)
                     .size(50.dp)
             ) {
-                IconButton(
-                    onClick = { navController.navigate("profile") }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Profile",
-                        tint = Color.White,
-                        modifier = Modifier.size(40.dp)
-                    )
+                if (!visibiltySetter.profile) {
+                    IconButton(
+                        onClick = { navController.navigate("profile") }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Profile",
+                            tint = Color.White,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
                 }
             }
         },
