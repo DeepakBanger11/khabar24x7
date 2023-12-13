@@ -1,11 +1,13 @@
 package com.startlearning.khabar24x7.modal.viewModal
 
+import android.util.Log
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.startlearning.khabar24x7.modal.data.TableArticle
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
 import com.startlearning.khabar24x7.modal.data.newsJson.NewsJsonResponse
@@ -14,6 +16,8 @@ import com.startlearning.khabar24x7.modal.repositories.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
@@ -27,20 +31,18 @@ class NewsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val getAllArticles: LiveData<List<TableArticle>> = repository.getAllArticles
-    val getAllArticlesAsc: LiveData<List<TableArticle>> = repository.getAllArticlesAsc
     private val _newsJsonResponse = MutableLiveData<NewsJsonResponse>()
     val newsJsonResponse: LiveData<NewsJsonResponse> = _newsJsonResponse
     private val _selectedArticle = MutableLiveData<TableArticle?>()
     val selectedArticle: LiveData<TableArticle?> = _selectedArticle
 
+    private val _newsPagingList = MutableStateFlow<PagingData<Article>>(PagingData.empty())
+    val newsPagingList: StateFlow<PagingData<Article>> get() = _newsPagingList
+
+
     fun addArticles(article: TableArticle) {
         viewModelScope.launch {
             repository.addArticles(article)
-        }
-    }
-    fun deleteArticleByTitle(title: String) {
-        viewModelScope.launch {
-            repository.deleteArticleByTitle(title)
         }
     }
 
@@ -82,7 +84,7 @@ class NewsViewModel @Inject constructor(
         try {
             viewModelScope.launch {
                 val response =
-                    apiRequestWithRetry { repository.getAllNews(page, category, language) }
+                     repository.getAllNews(page, category, language)
                 _newsJsonResponse.postValue(response)
             }
         } catch (e: IOException) {
@@ -90,8 +92,13 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    fun getNewsPaging(category: String, language: String): Flow<PagingData<Article>> {
-        return repository.getNewsPaging(category, language)
+    fun getNewsPaging(category: String, language: String) {
+        viewModelScope.launch {
+            val pagingDataFlow = repository.getNewsPaging(category, language)
+            pagingDataFlow.collect { pagingData ->
+                _newsPagingList.value = pagingData
+            }
+        }
     }
 
     // Example function in the ViewModel to set the selected language/categories
@@ -123,14 +130,6 @@ class NewsViewModel @Inject constructor(
         viewModelScope.launch {
             userPreferencesDataStore.setArticleId(articleId)
         }
-    }
-   fun setArticle(article: TableArticle) {
-       viewModelScope.launch {
-           userPreferencesDataStore.setArticle(article)
-       }
-    }
-    suspend fun getArticle(): TableArticle? {
-        return userPreferencesDataStore.getArticle()
     }
 
 

@@ -1,5 +1,6 @@
 package com.startlearning.khabar24x7.modal.network.paging
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
@@ -15,6 +16,7 @@ class NewsPagingSource(
         return try {
             val nextPage = params.key ?: 1
             val response = apiServices.getAllNews(nextPage,category,language)
+            Log.d("news", nextPage.toString())
             LoadResult.Page(
                 data = response.articles,
                 prevKey = if (nextPage == 1) null else nextPage - 1,

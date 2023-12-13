@@ -1,7 +1,7 @@
 package com.startlearning.khabar24x7.ui.screens.news
 
 
-import androidx.compose.foundation.clickable
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,15 +10,20 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -33,12 +38,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.startlearning.khabar24x7.modal.data.TableArticle
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
-import com.startlearning.khabar24x7.modal.data.VisibiltySetter
+import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 import com.startlearning.khabar24x7.ui.screens.other.TopBar
@@ -53,11 +59,14 @@ fun NewsListScreen(
 ) {
     val selectedLanguage by userPreferencesDataStore.selectedLanguageFlow.collectAsState(initial = "")
     val selectedCategories by userPreferencesDataStore.selectedCategoriesFlow.collectAsState(initial = "en")
-
-    val lazyPagingItems = newsViewModel.getNewsPaging(
+    newsViewModel.getNewsPaging(
         selectedCategories.toString() ?: "health",
         "en"
-    ).collectAsLazyPagingItems()
+    )
+    val lazyPagingItems = newsViewModel.newsPagingList.collectAsLazyPagingItems()
+
+
+
     Column {
         TopBar(navController = navController, VisibiltySetter(false, true))
         LazyColumn {
@@ -65,7 +74,6 @@ fun NewsListScreen(
                 val article = lazyPagingItems[index]
                 if (article != null) {
                     NewsItem(
-                        navController = navController,
                         article = article,
                         newsViewModel = newsViewModel
                     )
@@ -80,27 +88,23 @@ fun NewsListScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun NewsItem(
-    navController: NavHostController,
     article: Article,
     newsViewModel: NewsViewModel
 ) {
     var isFabVisible by remember { mutableStateOf(false) }
     val articlesState = newsViewModel.getAllArticles.observeAsState(initial = emptyList())
-    if (articlesState.value.any { it.title == article.title }) {
-        isFabVisible = true
+    articlesState.value.forEach { item ->
+        if (item.title == article.title) {
+            isFabVisible = false
+        } else {
+            isFabVisible = true
+        }
+
     }
     Surface(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
-            .clickable {
-                newsViewModel.setNavigation("fromAPI")
-                AddArticleToDataStore(
-                    article = article,
-                    newsViewModel = newsViewModel
-                )
-                navController.navigate("newsDetails")
-            }
             .clip(RoundedCornerShape(8.dp)),
         tonalElevation = 5.dp,
         shadowElevation = 5.dp,
@@ -122,35 +126,39 @@ fun NewsItem(
                     contentScale = ContentScale.Crop
                 )
                 // setting visibility of fab
-
                 FloatingActionButton(
                     onClick = {
                         isFabVisible = !isFabVisible
-                        if (isFabVisible) {
-                            AddArticleToDatabase(
-                                article = article,
-                                newsViewModel = newsViewModel
-                            )
-                        } else {
-                            newsViewModel.deleteArticleByTitle(article.title)
-                        }
-
+                        AddArticleToDatabase(
+                            article = article,
+                            newsViewModel = newsViewModel
+                        )
                     },
                     elevation = FloatingActionButtonDefaults.elevation(3.dp),
-                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                    containerColor = Color.Transparent,
                     modifier = Modifier
                         .padding(16.dp)
                         .align(Alignment.TopEnd) // Positioning at the top end of the image
                 ) {
-
-                    if (!isFabVisible) {
-                        Text(text = "+")
+                    if (isFabVisible) {
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Favorite",
+                            tint = MaterialTheme.colorScheme.inverseSurface,
+                            modifier = Modifier.size(40.dp)
+                        )
                     } else {
-                        Text(text = "-")
+                        Icon(
+                            imageVector = Icons.Default.Favorite,
+                            contentDescription = "Favorite",
+                            tint = Color.Red,
+                            modifier = Modifier.size(40.dp)
+                        )
                     }
                 }
-            }
 
+
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -195,22 +203,5 @@ fun AddArticleToDatabase(
     )
 }
 
-fun AddArticleToDataStore(
-    article: Article,
-    newsViewModel: NewsViewModel
-) {
-    newsViewModel.setArticle(
-        TableArticle(
-            0,
-            article.author,
-            article.content,
-            article.description,
-            article.publishedAt,
-            article.title,
-            article.url,
-            article.urlToImage
-        )
-    )
-}
 
 

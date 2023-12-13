@@ -1,5 +1,6 @@
 package com.startlearning.khabar24x7.modal.repositories
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -21,13 +22,9 @@ class NewsRepository @Inject constructor(
     private val newsDao: NewsDao
 ) {
     val getAllArticles: LiveData<List<TableArticle>> = newsDao.getAllArticles()
-    val getAllArticlesAsc: LiveData<List<TableArticle>> = newsDao.getAllArticlesAsc()
 
     suspend fun addArticles(article: TableArticle) {
         newsDao.addArticles(article)
-    }
-    suspend fun deleteArticleByTitle(title: String) {
-        newsDao.deleteArticleByTitle(title)
     }
 
      fun getSelectedArticle(articleId: Int): LiveData<TableArticle> {
@@ -37,9 +34,12 @@ class NewsRepository @Inject constructor(
         return newsApiServices.getAllNews(page,category,language)
     }
     fun getNewsPaging(category: String,language:String): Flow<PagingData<Article>> {
+
         return Pager(
             config = PagingConfig(pageSize = 30, enablePlaceholders = false),
-            pagingSourceFactory = { NewsPagingSource(newsApiServices,category,language) }
+            pagingSourceFactory = {
+                NewsPagingSource(newsApiServices,category,language)
+            }
         ).flow
     }
 
