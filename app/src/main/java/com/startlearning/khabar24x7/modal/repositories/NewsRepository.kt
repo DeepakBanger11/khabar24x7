@@ -1,11 +1,11 @@
 package com.startlearning.khabar24x7.modal.repositories
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.startlearning.khabar24x7.modal.data.TableArticle
+import com.startlearning.khabar24x7.modal.data.TempTable
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
 import com.startlearning.khabar24x7.modal.data.newsJson.NewsJsonResponse
 import com.startlearning.khabar24x7.modal.database.room.NewsDao
@@ -22,12 +22,22 @@ class NewsRepository @Inject constructor(
     private val newsDao: NewsDao
 ) {
     val getAllArticles: LiveData<List<TableArticle>> = newsDao.getAllArticles()
+    val getArticle: LiveData<List<TempTable>> = newsDao.getArticle()
 
+    suspend fun addTempArticle(article:TempTable) {
+        newsDao.addTempArticle(article)
+    }
     suspend fun addArticles(article: TableArticle) {
         newsDao.addArticles(article)
     }
+    suspend fun deleteArticleByTitle(article: String) {
+        newsDao.deleteArticleByTitle(article)
+    }
+    suspend fun deleteArticle() {
+        newsDao.deleteArticle()
+    }
 
-     fun getSelectedArticle(articleId: Int): LiveData<TableArticle> {
+    fun getSelectedArticle(articleId: Int): LiveData<TableArticle> {
         return newsDao.getSelectedArticle(articleId)
     }
     suspend fun getAllNews(page:Int,category: String,language:String): NewsJsonResponse {

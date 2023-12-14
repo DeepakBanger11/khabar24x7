@@ -1,21 +1,18 @@
 package com.startlearning.khabar24x7.modal.viewModal
 
-import android.util.Log
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.startlearning.khabar24x7.modal.data.TableArticle
+import com.startlearning.khabar24x7.modal.data.TempTable
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
 import com.startlearning.khabar24x7.modal.data.newsJson.NewsJsonResponse
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.repositories.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -31,6 +28,7 @@ class NewsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val getAllArticles: LiveData<List<TableArticle>> = repository.getAllArticles
+    val getArticle: LiveData<List<TempTable>> = repository.getArticle
     private val _newsJsonResponse = MutableLiveData<NewsJsonResponse>()
     val newsJsonResponse: LiveData<NewsJsonResponse> = _newsJsonResponse
     private val _selectedArticle = MutableLiveData<TableArticle?>()
@@ -43,6 +41,21 @@ class NewsViewModel @Inject constructor(
     fun addArticles(article: TableArticle) {
         viewModelScope.launch {
             repository.addArticles(article)
+        }
+    }
+    fun addTempArticle(article:TempTable) {
+        viewModelScope.launch {
+            repository.addTempArticle(article)
+        }
+    }
+    fun deleteArticleByTitle(article: String) {
+        viewModelScope.launch {
+            repository.deleteArticleByTitle(article)
+        }
+    }
+    fun deleteArticle(){
+        viewModelScope.launch {
+            repository.deleteArticle()
         }
     }
 

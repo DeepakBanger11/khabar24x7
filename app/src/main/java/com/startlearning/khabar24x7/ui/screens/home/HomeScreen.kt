@@ -53,7 +53,11 @@ fun HomeScreen(
     val chunkedCategories = newsCategories.chunked(2)
 
     Column {
-        TopBar(navController = navController, VisibiltySetter(false,false))
+        TopBar(
+            navController = navController,
+            VisibiltySetter(false,false),
+            newsViewModel = newsViewModel,
+            userPreferencesDataStore =userPreferencesDataStore)
         LazyColumn(
             modifier = Modifier.padding(15.dp)
         ) {

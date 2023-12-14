@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import com.startlearning.khabar24x7.modal.data.TableArticle
 import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
@@ -52,9 +53,35 @@ fun NewsDetailScreen(
     userPreferencesDataStore: UserPreferencesDataStore
 ) {
     val context = LocalContext.current
-    val selectedArticle by newsViewModel.selectedArticle.observeAsState()
+    val navigation by userPreferencesDataStore.navigation.collectAsState(initial = "home")
+    val _selectedArticle by newsViewModel.selectedArticle.observeAsState()
+    val articleState = newsViewModel.getArticle.observeAsState(initial = emptyList())
+    val article = articleState.value
+    var selectedArticle = TableArticle(0,"asa","sasa","as","as","as","ss","as")
+
+    if (navigation.toString() == "newsDetail") {
+        selectedArticle = TableArticle(
+            0,
+            article[1].author,
+            article[1].content,
+            article[1].description,
+            article[1].publishedAt,
+            article[1].title,
+            article[1].url,
+            article[1].urlToImage
+        )
+        newsViewModel.setNavigation("delete")
+    } else {
+        selectedArticle = _selectedArticle ?: TableArticle(0, "", "", "", "", "", "", "")
+    }
+
     Column {
-        TopBar(navController = navController, VisibiltySetter(false,true))
+        TopBar(
+            navController = navController,
+            VisibiltySetter(false,true),
+            newsViewModel = newsViewModel,
+            userPreferencesDataStore =userPreferencesDataStore
+        )
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -123,3 +150,5 @@ fun NewsDetailScreen(
         }
     }
 }
+
+

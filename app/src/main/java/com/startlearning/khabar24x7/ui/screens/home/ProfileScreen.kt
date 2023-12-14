@@ -56,7 +56,6 @@ import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 import com.startlearning.khabar24x7.ui.screens.other.TopBar
 
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
@@ -76,7 +75,12 @@ fun ProfileScreen(
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TopBar(navController = navController, VisibiltySetter(false,true))
+        TopBar(
+            navController = navController,
+            VisibiltySetter(false, true),
+            newsViewModel = newsViewModel,
+            userPreferencesDataStore = userPreferencesDataStore
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -146,6 +150,7 @@ fun ProfileScreen(
                 Card(
                     onClick = {
                         newsViewModel.getSelectedArticle(article.id)
+                        newsViewModel.setNavigation("newsDetail1")
                         navController.navigate("newsDetails")
                     },
                     modifier = Modifier

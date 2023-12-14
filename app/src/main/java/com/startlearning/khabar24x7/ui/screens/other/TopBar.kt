@@ -15,19 +15,28 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
+import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
+import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(navController: NavController, showBackArrow: VisibiltySetter) {
+fun TopBar(
+    navController: NavController,
+    showBackArrow: VisibiltySetter,
+    newsViewModel: NewsViewModel,
+    userPreferencesDataStore: UserPreferencesDataStore
+) {
     val scope = rememberCoroutineScope()
-
+    val navigation by userPreferencesDataStore.navigation.collectAsState(initial = "home")
     TopAppBar(
         title = {
             Text(
@@ -37,7 +46,13 @@ fun TopBar(navController: NavController, showBackArrow: VisibiltySetter) {
         },
         navigationIcon = {
             if (showBackArrow.back) {
-                IconButton(onClick = { navController.navigateUp() }) {
+                IconButton(onClick = {
+                 /*   if (navigation == "delete")
+                    {newsViewModel.deleteArticle()}
+                    else{}*/
+                    newsViewModel.setNavigation("login")
+                    navController.navigateUp()
+                }) {
                     Icon(
                         Icons.Default.ArrowBack,
                         contentDescription = "Back",

@@ -2,6 +2,7 @@ package com.startlearning.khabar24x7.ui.screens.news
 
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -38,11 +38,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.startlearning.khabar24x7.modal.data.TableArticle
+import com.startlearning.khabar24x7.modal.data.TempTable
 import com.startlearning.khabar24x7.modal.data.newsJson.Article
 import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
@@ -68,12 +68,17 @@ fun NewsListScreen(
 
 
     Column {
-        TopBar(navController = navController, VisibiltySetter(false, true))
+        TopBar(
+            navController = navController,
+            VisibiltySetter(false, true),
+            newsViewModel = newsViewModel,
+            userPreferencesDataStore =userPreferencesDataStore)
         LazyColumn {
             items(lazyPagingItems.itemCount) { index ->
                 val article = lazyPagingItems[index]
                 if (article != null) {
                     NewsItem(
+                        navController = navController,
                         article = article,
                         newsViewModel = newsViewModel
                     )
@@ -88,6 +93,7 @@ fun NewsListScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun NewsItem(
+    navController: NavHostController,
     article: Article,
     newsViewModel: NewsViewModel
 ) {
@@ -95,9 +101,8 @@ fun NewsItem(
     val articlesState = newsViewModel.getAllArticles.observeAsState(initial = emptyList())
     articlesState.value.forEach { item ->
         if (item.title == article.title) {
-            isFabVisible = false
-        } else {
             isFabVisible = true
+        } else {
         }
 
     }
@@ -105,6 +110,11 @@ fun NewsItem(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
+            .clickable {
+                TempArticleToDatabase(article = article, newsViewModel = newsViewModel)
+                newsViewModel.setNavigation("newsDetail")
+                navController.navigate("newsDetails")
+            }
             .clip(RoundedCornerShape(8.dp)),
         tonalElevation = 5.dp,
         shadowElevation = 5.dp,
@@ -129,18 +139,23 @@ fun NewsItem(
                 FloatingActionButton(
                     onClick = {
                         isFabVisible = !isFabVisible
-                        AddArticleToDatabase(
-                            article = article,
-                            newsViewModel = newsViewModel
-                        )
+                        if (isFabVisible) {
+                            AddArticleToDatabase(
+                                article = article,
+                                newsViewModel = newsViewModel
+                            )
+                        } else {
+                            newsViewModel.deleteArticleByTitle(article.title)
+                        }
+
                     },
                     elevation = FloatingActionButtonDefaults.elevation(3.dp),
-                    containerColor = Color.Transparent,
+                    containerColor = MaterialTheme.colorScheme.surface,
                     modifier = Modifier
                         .padding(16.dp)
                         .align(Alignment.TopEnd) // Positioning at the top end of the image
                 ) {
-                    if (isFabVisible) {
+                    if (!isFabVisible) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = "Favorite",
@@ -168,14 +183,14 @@ fun NewsItem(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = article.title,
+                    text = article.title ?: "Default Text",
                     style = MaterialTheme.typography.headlineSmall,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = article.author,
+                    text = article.author ?: "Default Text",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color.Gray
                 )
@@ -189,18 +204,34 @@ fun AddArticleToDatabase(
     article: Article,
     newsViewModel: NewsViewModel
 ) {
-    newsViewModel.addArticles(
-        TableArticle(
-            0,
-            article.author,
-            article.content,
-            article.description,
-            article.publishedAt,
-            article.title,
-            article.url,
-            article.urlToImage
-        )
+    var tableArticle = TableArticle(
+        0,
+        article.author,
+        article.content,
+        article.description,
+        article.publishedAt,
+        article.title,
+        article.url,
+        article.urlToImage
     )
+    newsViewModel.addArticles(tableArticle)
+}
+
+fun TempArticleToDatabase(
+    article: Article,
+    newsViewModel: NewsViewModel
+) {
+    var tableArticle = TempTable(
+        0,
+        article.author,
+        article.content,
+        article.description,
+        article.publishedAt,
+        article.title,
+        article.url,
+        article.urlToImage
+    )
+    newsViewModel.addTempArticle(tableArticle)
 }
 
 
