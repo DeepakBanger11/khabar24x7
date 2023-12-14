@@ -47,11 +47,11 @@ fun TopBar(
         navigationIcon = {
             if (showBackArrow.back) {
                 IconButton(onClick = {
-                 /*   if (navigation == "delete")
-                    {newsViewModel.deleteArticle()}
-                    else{}*/
-                    newsViewModel.setNavigation("login")
-                    navController.navigateUp()
+                    if (navigation.toString() == "delete")
+                    {newsViewModel.deleteArticle()
+                        navController.navigateUp()}
+                    else{newsViewModel.setNavigation("login")
+                        navController.navigateUp()}
                 }) {
                     Icon(
                         Icons.Default.ArrowBack,
@@ -67,15 +67,17 @@ fun TopBar(
                     .padding(end = 16.dp)
                     .size(50.dp)
             ) {
-                IconButton(
-                    onClick = { navController.navigate("profile") }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Profile",
-                        tint = Color.White,
-                        modifier = Modifier.size(40.dp)
-                    )
+                if (showBackArrow.profile) {
+                    IconButton(
+                        onClick = { navController.navigate("profile") }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.AccountCircle,
+                            contentDescription = "Profile",
+                            tint = Color.White,
+                            modifier = Modifier.size(40.dp)
+                        )
+                    }
                 }
             }
         },

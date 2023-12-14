@@ -10,6 +10,7 @@ object Constants {
     const val SPLASH_SCREEN ="splash"
     const val NEWS_LIST_SCREEN ="newsList"
     const val NEWS_DETAIL_SCREEN ="newsDetails"
+    const val NEWS_ARTICLE_SCREEN ="newsArticle"
     const val PROFILE_SCREEN ="profile"
 
     const val SPLASH_SCREEN_DELAY = 5000L

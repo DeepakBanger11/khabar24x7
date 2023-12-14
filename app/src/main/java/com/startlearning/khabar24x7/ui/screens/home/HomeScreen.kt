@@ -55,7 +55,7 @@ fun HomeScreen(
     Column {
         TopBar(
             navController = navController,
-            VisibiltySetter(false,false),
+            VisibiltySetter(true,false),
             newsViewModel = newsViewModel,
             userPreferencesDataStore =userPreferencesDataStore)
         LazyColumn(

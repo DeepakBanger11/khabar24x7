@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.Card
@@ -34,6 +35,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -53,6 +57,7 @@ import com.startlearning.khabar24x7.modal.data.TableArticle
 import com.startlearning.khabar24x7.modal.data.newsJson.VisibiltySetter
 import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
+import com.startlearning.khabar24x7.ui.screens.other.AppBarFilter
 import com.startlearning.khabar24x7.ui.screens.other.TopBar
 
 
@@ -68,7 +73,7 @@ fun ProfileScreen(
     val navigation by userPreferencesDataStore.navigation.collectAsState(initial = "home")
     val articlesState = newsViewModel.getAllArticles.observeAsState(initial = emptyList())
     val articles = articlesState.value
-
+    var searchQuery by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -142,15 +147,34 @@ fun ProfileScreen(
         Spacer(modifier = Modifier.height(4.dp))
 
         // Saved Articles Section
-        SavedArticlesSortingBar()
+        AppBarFilter(
+            onSortClick = { /*TODO*/ },
+            onSearchTextChanged = { query -> searchQuery = query },
+            searchQuery = searchQuery
+        )
+        //SavedArticlesSortingBar()
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn {
-            items(articles) { article ->
+            // Filter the articles based on searchQuery
+            val filteredArticles = if (searchQuery.isNotBlank()) {
+                articles.filter { article ->
+                    article.title?.contains(searchQuery, ignoreCase = true) == true ||
+                            article.description?.contains(searchQuery, ignoreCase = true) == true ||
+                            article.author?.contains(searchQuery, ignoreCase = true) == true
+                }
+            } else {
+                articles
+            }
+
+            items(filteredArticles.size) { index ->
+                val likedArticle = filteredArticles[index]
+
+
                 Card(
                     onClick = {
-                        newsViewModel.getSelectedArticle(article.id)
-                        newsViewModel.setNavigation("newsDetail1")
+                        newsViewModel.getSelectedArticle(likedArticle.id)
+                        newsViewModel.setNavigation("newsDetails")
                         navController.navigate("newsDetails")
                     },
                     modifier = Modifier
@@ -158,9 +182,12 @@ fun ProfileScreen(
                         .padding(vertical = 2.dp, horizontal = 2.dp),
                     elevation = CardDefaults.cardElevation(8.dp),
                     shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
+                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainerLow)
                 ) {
-                    SavedArticleItem(article)
+                    SavedArticleItem(
+                        newsViewModel = newsViewModel,
+                        article = likedArticle
+                    )
                     Spacer(modifier = Modifier.height(4.dp))
                 }
             }
@@ -172,6 +199,7 @@ fun ProfileScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun SavedArticleItem(
+    newsViewModel: NewsViewModel,
     article: TableArticle
 ) {
 
@@ -196,8 +224,19 @@ fun SavedArticleItem(
             )
         }
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = article.title)
-        // Add more details about the article as needed
+        Text(
+            text = article.title,
+            maxLines = 3,
+            modifier = Modifier.weight(2f)
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        IconButton(
+            onClick = {
+                newsViewModel.deleteArticleByTitle(article.title)
+            }
+        ) {
+            Icon(imageVector = Icons.Default.Clear, contentDescription = "Delete")
+        }
     }
 }
 

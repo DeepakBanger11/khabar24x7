@@ -70,7 +70,7 @@ fun NewsListScreen(
     Column {
         TopBar(
             navController = navController,
-            VisibiltySetter(false, true),
+            VisibiltySetter(true, true),
             newsViewModel = newsViewModel,
             userPreferencesDataStore =userPreferencesDataStore)
         LazyColumn {
@@ -112,8 +112,8 @@ fun NewsItem(
             .fillMaxWidth()
             .clickable {
                 TempArticleToDatabase(article = article, newsViewModel = newsViewModel)
-                newsViewModel.setNavigation("newsDetail")
-                navController.navigate("newsDetails")
+                newsViewModel.setNavigation("delete")
+                navController.navigate("newsArticle")
             }
             .clip(RoundedCornerShape(8.dp)),
         tonalElevation = 5.dp,

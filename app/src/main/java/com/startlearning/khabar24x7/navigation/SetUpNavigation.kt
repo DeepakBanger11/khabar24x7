@@ -12,6 +12,7 @@ import com.startlearning.khabar24x7.modal.dataStore.UserPreferencesDataStore
 import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 import com.startlearning.khabar24x7.navigation.destination.homeComposable
 import com.startlearning.khabar24x7.navigation.destination.loginComposable
+import com.startlearning.khabar24x7.navigation.destination.newsArticleComposable
 import com.startlearning.khabar24x7.navigation.destination.newsDetailComposable
 import com.startlearning.khabar24x7.navigation.destination.newsListComposable
 import com.startlearning.khabar24x7.navigation.destination.profileComposable
@@ -61,6 +62,11 @@ fun SetUpNavigation(
             userPreferencesDataStore = userPreferencesDataStore
         )
         newsDetailComposable(
+            navController = navController,
+            newsViewModel = newsViewModel,
+            userPreferencesDataStore = userPreferencesDataStore
+        )
+        newsArticleComposable(
             navController = navController,
             newsViewModel = newsViewModel,
             userPreferencesDataStore = userPreferencesDataStore

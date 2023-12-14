@@ -30,6 +30,6 @@ interface NewsDao {
     suspend fun addTempArticle(article: TempTable)
 
     @Query("DELETE FROM temp_news_table")
-    fun deleteArticle()
+    suspend fun deleteArticle()
 
 }
