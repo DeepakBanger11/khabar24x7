@@ -22,6 +22,7 @@ class NewsRepository @Inject constructor(
     private val newsDao: NewsDao
 ) {
     val getAllArticles: LiveData<List<TableArticle>> = newsDao.getAllArticles()
+    val orderArticleByTitle: LiveData<List<TableArticle>> = newsDao.orderArticleByTitle()
     val getArticle: LiveData<List<TempTable>> = newsDao.getArticle()
 
     suspend fun addTempArticle(article:TempTable) {

@@ -14,6 +14,9 @@ interface NewsDao {
     @Query("SELECT * FROM news_table Order BY id ASC")
     fun getAllArticles(): LiveData<List<TableArticle>>
 
+    @Query("SELECT * FROM news_table Order BY title ASC")
+    fun orderArticleByTitle(): LiveData<List<TableArticle>>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addArticles(article: TableArticle)
 

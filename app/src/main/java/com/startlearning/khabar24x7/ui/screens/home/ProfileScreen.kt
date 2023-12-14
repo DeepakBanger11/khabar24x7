@@ -70,10 +70,18 @@ fun ProfileScreen(
 ) {
     val email by userPreferencesDataStore.email.collectAsState(initial = "test")
     val password by userPreferencesDataStore.password.collectAsState(initial = "test")
-    val navigation by userPreferencesDataStore.navigation.collectAsState(initial = "home")
-    val articlesState = newsViewModel.getAllArticles.observeAsState(initial = emptyList())
-    val articles = articlesState.value
+    val articlesState:Any
+    val articles:Any
     var searchQuery by remember { mutableStateOf("") }
+    var sortByTitle by remember { mutableStateOf(false) }
+
+    if (sortByTitle) {
+        articlesState = newsViewModel.orderArticleByTitle.observeAsState(initial = emptyList())
+        articles = articlesState.value
+    } else {
+        val articlesState = newsViewModel.getAllArticles.observeAsState(initial = emptyList())
+        articles = articlesState.value
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -148,7 +156,7 @@ fun ProfileScreen(
 
         // Saved Articles Section
         AppBarFilter(
-            onSortClick = { /*TODO*/ },
+            onSortClick = { sortByTitle = !sortByTitle },
             onSearchTextChanged = { query -> searchQuery = query },
             searchQuery = searchQuery
         )

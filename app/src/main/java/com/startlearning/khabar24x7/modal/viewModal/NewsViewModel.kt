@@ -28,6 +28,7 @@ class NewsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val getAllArticles: LiveData<List<TableArticle>> = repository.getAllArticles
+    val orderArticleByTitle: LiveData<List<TableArticle>> = repository.orderArticleByTitle
     val getArticle: LiveData<List<TempTable>> = repository.getArticle
     private val _newsJsonResponse = MutableLiveData<NewsJsonResponse>()
     val newsJsonResponse: LiveData<NewsJsonResponse> = _newsJsonResponse
