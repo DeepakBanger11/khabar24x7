@@ -60,11 +60,12 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.0")
-    implementation(platform("androidx.compose:compose-bom:2023.05.00"))
+    implementation(platform("androidx.compose:compose-bom:2023.06.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3-android:1.2.0-alpha03")
+
     // navigation
     implementation("androidx.navigation:navigation-compose:$nav_version")
     // retrofit and gson
@@ -118,12 +119,15 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-service:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-process:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version")
+    implementation("androidx.compose.runtime:runtime:1.5.4")
     implementation("androidx.compose.runtime:runtime-livedata:1.5.4")
+    implementation("androidx.compose.runtime:runtime-rxjava2:1.5.4")
 
     implementation("io.coil-kt:coil-compose:1.4.0")
     //truth mockito and turbine
     androidTestImplementation("com.google.truth:truth:1.1.4")
     testImplementation("com.google.truth:truth:1.1.4")
+    testImplementation("androidx.arch.core:core-testing:2.2.0-rc01")
     testImplementation("org.mockito:mockito-core:3.12.4")
     testImplementation("org.mockito:mockito-inline:3.8.0")
     androidTestImplementation("org.mockito:mockito-android:3.12.4")
@@ -135,4 +139,11 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    kaptTest("com.google.dagger:hilt-android-compiler:2.44")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.44")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.44")
+    androidTestImplementation("androidx.arch.core:core-testing:2.2.0")
+    androidTestImplementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2") // Replace with the latest version
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2") // For testing
 }

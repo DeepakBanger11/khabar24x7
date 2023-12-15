@@ -14,23 +14,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.SortByAlpha
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -44,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -60,7 +55,6 @@ import com.startlearning.khabar24x7.modal.viewModal.NewsViewModel
 import com.startlearning.khabar24x7.ui.screens.other.AppBarFilter
 import com.startlearning.khabar24x7.ui.screens.other.TopBar
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
@@ -70,8 +64,8 @@ fun ProfileScreen(
 ) {
     val email by userPreferencesDataStore.email.collectAsState(initial = "test")
     val password by userPreferencesDataStore.password.collectAsState(initial = "test")
-    val articlesState:Any
-    val articles:Any
+    val articlesState: Any
+    val articles: Any
     var searchQuery by remember { mutableStateOf("") }
     var sortByTitle by remember { mutableStateOf(false) }
 
@@ -82,6 +76,7 @@ fun ProfileScreen(
         val articlesState = newsViewModel.getAllArticles.observeAsState(initial = emptyList())
         articles = articlesState.value
     }
+    val contextForToast = LocalContext.current.applicationContext
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -178,119 +173,95 @@ fun ProfileScreen(
             items(filteredArticles.size) { index ->
                 val likedArticle = filteredArticles[index]
 
-
-                Card(
-                    onClick = {
-                        newsViewModel.getSelectedArticle(likedArticle.id)
-                        newsViewModel.setNavigation("newsDetails")
-                        navController.navigate("newsDetails")
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 2.dp, horizontal = 2.dp),
-                    elevation = CardDefaults.cardElevation(8.dp),
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surfaceContainerLow)
-                ) {
-                    SavedArticleItem(
-                        newsViewModel = newsViewModel,
-                        article = likedArticle
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
+                        Card(
+                            onClick = {
+                                newsViewModel.getSelectedArticle(likedArticle.id)
+                                newsViewModel.setNavigation("newsDetails")
+                                navController.navigate("newsDetails")
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp, horizontal = 2.dp),
+                            elevation = CardDefaults.cardElevation(8.dp),
+                            shape = MaterialTheme.shapes.extraLarge,
+                            colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
+                        ) {
+                            SavedArticleItem(
+                                newsViewModel = newsViewModel,
+                                article = likedArticle
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                    }
                 }
             }
         }
-    }
-}
 
 
-@OptIn(ExperimentalGlideComposeApi::class)
+
+
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SavedArticleItem(
     newsViewModel: NewsViewModel,
     article: TableArticle
 ) {
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = Color.White)
     ) {
-        Card(
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .size(80.dp)
-                .clip(CircleShape)
-                .shadow(10.dp),
-            elevation = CardDefaults.cardElevation(20.dp),
+                .fillMaxWidth()
+                .height(80.dp) // Adjust as per your item height
+                .background(Color.White)
+                .padding(horizontal = 16.dp)
         ) {
-            GlideImage(
-                model = article.urlToImage,
-                contentDescription = "",
-                modifier = Modifier
-                    .size(80.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
-            )
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = article.title,
-            maxLines = 3,
-            modifier = Modifier.weight(2f)
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            onClick = {
-                newsViewModel.deleteArticleByTitle(article.title)
-            }
-        ) {
-            Icon(imageVector = Icons.Default.Clear, contentDescription = "Delete")
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SavedArticlesSortingBar() {
-    Surface(
-        tonalElevation = 8.dp,
-        shadowElevation = 4.dp
-    ) {
-        TopAppBar(
-            title = {
-                Text(
-                    text = "Saved Articles",
-                    fontSize = 18.sp,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                )
-            },
-            actions = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(end = 8.dp)
+            // Your dismissible content here
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Card(
+                    modifier = Modifier
+                        .size(80.dp)
+                        .clip(CircleShape)
+                        .shadow(10.dp),
+                    elevation = CardDefaults.cardElevation(20.dp),
                 ) {
-                    IconButton(
-                        onClick = { /* Handle sorting by added date */ }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AccessTime,
-                            contentDescription = "Sort by Added Date"
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    IconButton(
-                        onClick = { /* Handle sorting alphabetically */ }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.SortByAlpha,
-                            contentDescription = "Sort Alphabetically"
-                        )
-                    }
+                    GlideImage(
+                        model = article.urlToImage,
+                        contentDescription = "",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
                 }
-            },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
-        )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = article.title,
+                    maxLines = 3,
+                    modifier = Modifier.weight(2f)
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = {
+                        newsViewModel.deleteArticleByTitle(article.title)
+                    }
+                ) {
+                    Icon(imageVector = Icons.Default.Clear, contentDescription = "Delete")
+                }
+
+            }
+        }
     }
 }
+
+
+

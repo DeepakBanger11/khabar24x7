@@ -2,13 +2,23 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="PreviewHomePage">
-        <State />
+      <entry key="LikedArticleDaoTest">
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="C:\Users\73468\.android\avd\Pixel_6_API_33.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2023-12-15T14:36:41.133038300Z" />
+        </State>
       </entry>
-      <entry key="PreviewLoginScreen">
-        <State />
-      </entry>
-      <entry key="SplashScreenPreview">
+      <entry key="NewsDaoTest">
         <State />
       </entry>
       <entry key="app">
